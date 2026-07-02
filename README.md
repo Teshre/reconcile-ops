@@ -4,6 +4,10 @@ Every payment a business takes flows through two systems that are supposed to ag
 
 > Personal portfolio project by **Eduardo Perry Rangel** ([github.com/Teshre](https://github.com/Teshre)). Independent, open source, and built to be read.
 
+[![Open in Streamlit](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://reconcile-ops-demo.streamlit.app/) [![CI](https://github.com/Teshre/reconcile-ops/actions/workflows/ci.yml/badge.svg)](https://github.com/Teshre/reconcile-ops/actions/workflows/ci.yml)
+
+**▶ Live demo: [reconcile-ops-demo.streamlit.app](https://reconcile-ops-demo.streamlit.app/)**
+
 ---
 
 ## Why this matters
@@ -143,12 +147,8 @@ Tolerance and SLA are configurable (see `.env.example`: `RECON_AMOUNT_TOLERANCE`
 
 ## Demo
 
-<!-- DEMO PLACEHOLDER — fill in before sharing -->
-
-- **2-minute walkthrough:** _coming soon_ (link to video)
-- **Live dashboard:** _coming soon_ (deployed Streamlit URL)
-
-![Dashboard screenshot placeholder](docs/dashboard.png)
+- **Live dashboard:** **[reconcile-ops-demo.streamlit.app](https://reconcile-ops-demo.streamlit.app/)** — generates the seeded synthetic sample on load, then reconciles it live: KPI cards (match/break rate, settlement success, time-to-settle p95, cost per txn, value at risk), a break-type-filterable exceptions table, and a settlement trend. You can also upload your own PSP + ledger CSVs to reconcile real data.
+- **2-minute walkthrough:** _coming soon_ (video).
 
 ---
 
