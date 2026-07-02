@@ -118,14 +118,45 @@ def _read_csv(source):
     return PD.read_csv(source)
 
 
+def _generate_sample_into(outdir: Path):
+    """Generate the synthetic sample by importing data/generate.py by path.
+
+    Deployed environments (e.g. Streamlit Community Cloud) clone the repo
+    WITHOUT data/*.csv (they're gitignored), so the demo must be able to
+    materialize its own sample. Writes to a caller-chosen (writable) dir.
+    Returns (psp_path, ledger_path, gt_path) or (None, None, None) on failure.
+    """
+    try:
+        import importlib.util
+        gen_path = DATA_DIR / "generate.py"
+        spec = importlib.util.spec_from_file_location("recon_generate", gen_path)
+        gen = importlib.util.module_from_spec(spec)
+        # Register before exec so @dataclass in generate.py can resolve its
+        # module via sys.modules (required on Python 3.14).
+        sys.modules[spec.name] = gen
+        spec.loader.exec_module(gen)
+        psp_rows, ledger_rows, gt_rows = gen.generate(gen.DEFAULT_N, gen.DEFAULT_SEED)
+        paths = gen.write_all(str(outdir), psp_rows, ledger_rows, gt_rows)
+        return Path(paths["psp"]), Path(paths["ledger"]), Path(paths["ground_truth"])
+    except Exception:  # pragma: no cover - environment dependent
+        return None, None, None
+
+
 @st.cache_data(show_spinner=False)
 def _load_sample():
-    """Load the bundled sample psp/ledger/ground_truth if present."""
+    """Load the bundled sample; generate it on the fly if it's not present."""
     if PD is None:
         return None, None, None
-    psp = _read_csv(DEFAULT_PSP) if DEFAULT_PSP.exists() else None
-    ledger = _read_csv(DEFAULT_LEDGER) if DEFAULT_LEDGER.exists() else None
-    gt = _read_csv(DEFAULT_GROUND_TRUTH) if DEFAULT_GROUND_TRUTH.exists() else None
+    psp_path, ledger_path, gt_path = DEFAULT_PSP, DEFAULT_LEDGER, DEFAULT_GROUND_TRUTH
+    if not psp_path.exists():
+        import tempfile
+        outdir = Path(tempfile.gettempdir()) / "reconcile_ops_sample"
+        gp, gl, gg = _generate_sample_into(outdir)
+        if gp is not None:
+            psp_path, ledger_path, gt_path = gp, gl, gg
+    psp = _read_csv(psp_path) if psp_path.exists() else None
+    ledger = _read_csv(ledger_path) if ledger_path.exists() else None
+    gt = _read_csv(gt_path) if gt_path.exists() else None
     return psp, ledger, gt
 
 
