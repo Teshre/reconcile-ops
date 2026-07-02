@@ -1,0 +1,31 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "reconcile-ops"
+version = "0.1.0"
+description = "Payments reconciliation + KPI analytics pipeline"
+readme = "README.md"
+requires-python = ">=3.11"
+authors = [{ name = "Eduardo Perry Rangel" }]
+license = { text = "MIT" }
+dependencies = [
+    "pandas>=2.2,<4.0",
+    "duckdb>=1.4,<2.0",
+]
+
+[project.optional-dependencies]
+app = ["streamlit>=1.40,<2.0"]
+dev = ["pytest>=8.0,<10.0", "faker>=30.0,<41.0"]
+
+[project.scripts]
+reconcile-ops = "reconcile_ops.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
+addopts = "-q"

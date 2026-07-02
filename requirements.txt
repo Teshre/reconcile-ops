@@ -1,0 +1,24 @@
+# Reconcile-Ops runtime + dev dependencies.
+# Pinned with conservative lower bounds; all have Python 3.14 wheels
+# (verified on macOS / CPython 3.14). Upper caps guard against the next
+# major bumps so a fresh install stays reproducible.
+
+# SQL execution over CSVs (zero-setup, embedded).
+duckdb>=1.4,<2.0
+
+# DataFrames for the reconciler / KPI layer.
+pandas>=2.2,<4.0
+
+# Interactive dashboard.
+streamlit>=1.40,<2.0
+
+# Test runner.
+pytest>=8.0,<10.0
+
+# Seeded synthetic data generation.
+faker>=30.0,<41.0
+
+# Install the reconcile_ops package itself (editable) so `python -m
+# reconcile_ops.cli` and `import reconcile_ops` resolve from the src/ layout.
+# Keep this last so its dependency pins above are already satisfied.
+-e .
